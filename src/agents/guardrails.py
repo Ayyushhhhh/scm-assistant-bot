@@ -70,7 +70,8 @@ _INJECTION_PATTERNS = [
 def detect_greeting(query: str) -> bool:
     """Check if the query is a greeting (no LLM call needed)."""
     cleaned = query.lower().strip().rstrip("!?.")
-    return cleaned in _GREETINGS or any(g in cleaned for g in _GREETINGS)
+    # Only exact match to avoid triggering on substrings like "Which" containing "hi"
+    return cleaned in _GREETINGS
 
 
 def detect_offtopic(query: str) -> bool:
