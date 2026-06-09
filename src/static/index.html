@@ -33,11 +33,19 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #ecfeff 100%);
+            background-size: 200% 200%;
+            animation: gradientMove 15s ease infinite;
             color: var(--text-primary);
             height: 100vh;
             display: flex;
             overflow: hidden;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* ── Sidebar ────────────────────────────────────── */
@@ -244,7 +252,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--bg-secondary);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             flex-shrink: 0;
         }
 
@@ -330,12 +340,14 @@
         }
 
         .message.bot .bubble {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
             border-bottom-left-radius: 4px;
+            color: #064e3b;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08);
         }
 
-        .bubble strong { color: var(--accent-light); font-weight: 600; }
+        .bubble strong { color: #047857; font-weight: 600; }
         .bubble em { color: var(--text-secondary); font-style: italic; }
         .bubble code {
             background: rgba(99,102,241,0.12);
@@ -410,7 +422,9 @@
         /* ── Input ──────────────────────────────────────── */
         .input-bar {
             padding: 16px 24px 20px;
-            background: var(--bg-secondary);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-top: 1px solid var(--border);
             flex-shrink: 0;
         }
