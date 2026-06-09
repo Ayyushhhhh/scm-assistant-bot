@@ -1,4 +1,66 @@
 {
-  "name": "SCM Assistant",
-  "flowData": "{\"nodes\":[{\"id\":\"chatGoogleGenerativeAI_0\",\"position\":{\"x\":100,\"y\":100},\"type\":\"customNode\",\"data\":{\"id\":\"chatGoogleGenerativeAI_0\",\"name\":\"chatGoogleGenerativeAI\",\"label\":\"ChatGoogleGenerativeAI\",\"type\":\"ChatGoogleGenerativeAI\",\"inputs\":{\"modelName\":\"gemini-2.0-flash\",\"googleApiKey\":\"\"}},\"width\":300,\"height\":400,\"selected\":false,\"positionAbsolute\":{\"x\":100,\"y\":100},\"dragging\":false},{\"id\":\"customTool_0\",\"position\":{\"x\":100,\"y\":600},\"type\":\"customNode\",\"data\":{\"id\":\"customTool_0\",\"name\":\"customTool\",\"label\":\"Custom Tool\",\"type\":\"CustomTool\",\"inputs\":{\"name\":\"scm_backend\",\"description\":\"Answer all user questions using this tool.\",\"javascriptFunction\":\"const fetch = require('node-fetch');\\nconst response = await fetch('https://scm-assistant-bot-1.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: $input, mode: 'vector_rag' }) });\\nconst data = await response.json();\\nreturn data.answer;\"}},\"width\":300,\"height\":500,\"selected\":false,\"positionAbsolute\":{\"x\":100,\"y\":600},\"dragging\":false},{\"id\":\"toolAgent_0\",\"position\":{\"x\":600,\"y\":300},\"type\":\"customNode\",\"data\":{\"id\":\"toolAgent_0\",\"name\":\"toolAgent\",\"label\":\"Tool Agent\",\"type\":\"ToolAgent\",\"inputs\":{\"model\":\"\",\"tools\":[]}},\"width\":300,\"height\":400,\"selected\":false,\"positionAbsolute\":{\"x\":600,\"y\":300},\"dragging\":false}],\"edges\":[]}"
+  "nodes": [
+    {
+      "id": "chatGoogleGenerativeAI_0",
+      "position": { "x": 100, "y": 100 },
+      "type": "customNode",
+      "data": {
+        "id": "chatGoogleGenerativeAI_0",
+        "name": "chatGoogleGenerativeAI",
+        "label": "ChatGoogleGenerativeAI",
+        "type": "ChatGoogleGenerativeAI",
+        "inputs": {
+          "modelName": "gemini-2.0-flash",
+          "googleApiKey": ""
+        }
+      },
+      "width": 300,
+      "height": 400,
+      "selected": false,
+      "positionAbsolute": { "x": 100, "y": 100 },
+      "dragging": false
+    },
+    {
+      "id": "customTool_0",
+      "position": { "x": 100, "y": 600 },
+      "type": "customNode",
+      "data": {
+        "id": "customTool_0",
+        "name": "customTool",
+        "label": "Custom Tool",
+        "type": "CustomTool",
+        "inputs": {
+          "name": "scm_backend",
+          "description": "Answer all user questions using this tool.",
+          "javascriptFunction": "const fetch = require('node-fetch');\nconst response = await fetch('https://scm-assistant-bot-1.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: $input, mode: 'vector_rag' }) });\nconst data = await response.json();\nreturn data.answer;"
+        }
+      },
+      "width": 300,
+      "height": 500,
+      "selected": false,
+      "positionAbsolute": { "x": 100, "y": 600 },
+      "dragging": false
+    },
+    {
+      "id": "toolAgent_0",
+      "position": { "x": 600, "y": 300 },
+      "type": "customNode",
+      "data": {
+        "id": "toolAgent_0",
+        "name": "toolAgent",
+        "label": "Tool Agent",
+        "type": "ToolAgent",
+        "inputs": {
+          "model": "",
+          "tools": []
+        }
+      },
+      "width": 300,
+      "height": 400,
+      "selected": false,
+      "positionAbsolute": { "x": 600, "y": 300 },
+      "dragging": false
+    }
+  ],
+  "edges": []
 }
