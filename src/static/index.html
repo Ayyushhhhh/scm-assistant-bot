@@ -8,25 +8,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0b0f19;
-            --bg-secondary: #111828;
-            --bg-card: #1a2036;
-            --bg-input: #1e2540;
-            --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.25);
-            --accent-light: #818cf8;
-            --accent-surface: rgba(99,102,241,0.08);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.25);
+            --accent-light: #34d399;
+            --accent-surface: rgba(16, 185, 129, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
             --text-muted: #64748b;
-            --border: #2d3555;
+            --border: #e2e8f0;
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
-            --user-bubble: rgba(99,102,241,0.15);
-            --bot-bubble: #161d30;
-            --radius: 14px;
-            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --user-bubble: rgba(16, 185, 129, 0.1);
+            --bot-bubble: #ffffff;
+            --radius: 16px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -309,8 +309,8 @@
             margin-top: 2px;
         }
 
-        .message.bot .avatar { background: linear-gradient(135deg, var(--accent), #a78bfa); }
-        .message.user .avatar { background: var(--user-bubble); border: 1px solid var(--border); }
+        .message.bot .avatar { background: var(--accent); color: white; }
+        .message.user .avatar { background: var(--user-bubble); color: var(--accent); border: 1px solid rgba(16,185,129,0.2); }
 
         .msg-wrapper { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 
@@ -320,16 +320,17 @@
             line-height: 1.65;
             font-size: 13.5px;
             word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
         .message.user .bubble {
-            background: var(--user-bubble);
-            border: 1px solid rgba(99,102,241,0.2);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-bottom-right-radius: 4px;
         }
 
         .message.bot .bubble {
-            background: var(--bot-bubble);
+            background: var(--bg-card);
             border: 1px solid var(--border);
             border-bottom-left-radius: 4px;
         }
@@ -473,7 +474,7 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="brand">
-                <div class="brand-icon">⚡</div>
+                <div class="brand-icon">S</div>
                 <h1>SCM Assistant</h1>
             </div>
             <div class="brand-sub">BQBYTE Technologies</div>
@@ -534,8 +535,8 @@
         </div>
 
         <div class="sidebar-footer">
-            Gemini 2.5 Flash · FAISS · Jina Reranker<br>
-            Section-Aware Chunking · RRF Fusion
+            Supply Chain Intelligence<br>
+            BQBYTE Technologies
         </div>
     </aside>
 
@@ -646,7 +647,7 @@
 
         const avatar = document.createElement('div');
         avatar.className = 'avatar';
-        avatar.textContent = type === 'user' ? '👤' : '⚡';
+        avatar.textContent = type === 'user' ? 'U' : 'S';
 
         const wrap = document.createElement('div');
         wrap.className = 'msg-wrapper';
@@ -657,29 +658,7 @@
         wrap.appendChild(bubble);
 
         if (meta && type === 'bot') {
-            const row = document.createElement('div');
-            row.className = 'metrics-row';
-
-            if (meta.query_type) {
-                const qt = document.createElement('span');
-                qt.className = `query-type-chip ${meta.query_type}`;
-                qt.textContent = meta.query_type.replace('_',' ');
-                row.appendChild(qt);
-            }
-
-            const m = meta.metrics || {};
-            const chips = [
-                ['🤖', `${m.total_llm_calls||0} LLM calls`],
-                ['⏱️', `${Math.round(m.total_latency_ms||0)}ms`],
-                ['📊', `${(m.total_input_tokens||0)+(m.total_output_tokens||0)} tokens`],
-            ];
-            chips.forEach(([emoji, label]) => {
-                const chip = document.createElement('span');
-                chip.className = 'metric-chip';
-                chip.innerHTML = `<span class="emoji">${emoji}</span> ${label}`;
-                row.appendChild(chip);
-            });
-            wrap.appendChild(row);
+            // Metrics rendering removed to keep UI simple and human-like
         }
 
         msg.appendChild(avatar);
@@ -692,7 +671,7 @@
         const msg = document.createElement('div');
         msg.className = 'message bot';
         msg.id = 'typing';
-        msg.innerHTML = `<div class="avatar">⚡</div><div class="msg-wrapper"><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+        msg.innerHTML = `<div class="avatar">S</div><div class="msg-wrapper"><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
         chatArea.appendChild(msg);
         chatArea.scrollTop = chatArea.scrollHeight;
     }

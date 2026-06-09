@@ -25,18 +25,10 @@ _GREETINGS = {
 }
 
 WELCOME_MESSAGE = (
-    "👋 **Welcome to SCM Assistant!**\n\n"
-    "I'm your AI-powered Supply Chain Governance expert for **BQBYTE Technologies**.\n\n"
-    "I can help you with:\n"
-    "- 📊 **Supplier data analysis** — performance metrics, rankings, aggregations\n"
-    "- 📋 **Policy lookup** — tier thresholds, SLAs, penalties, audit rules\n"
-    "- 🔍 **Compliance checks** — SWL status, certification requirements, disruption response\n\n"
-    "**Try asking:**\n"
-    "- *Which suppliers qualify for the Volume Rebate Program?*\n"
-    "- *Which region has the highest total PO value?*\n"
-    "- *What are the disruption response levels?*\n\n"
-    "You can switch between **Vector RAG** and **PageIndex** modes using the toggle above.\n\n"
-    "---\n*Powered by Gemini Flash · FAISS · Jina Reranker · Hybrid RAG*"
+    "Welcome to SCM Assistant.\n\n"
+    "I am your supply chain governance assistant for BQBYTE Technologies. "
+    "Feel free to ask me anything about supplier performance, policies, or compliance checks.\n\n"
+    "How can I help you today?"
 )
 
 # ── Off-topic keywords that signal non-supply-chain questions ────────────────
