@@ -1,42 +1,68 @@
 {
-  "description": "SCM Assistant — Supply Chain Governance RAG Chatbot for BQBYTE Technologies. Connects to a custom FastAPI backend with hybrid retrieval (FAISS + BM25 + Jina Reranker) and dual pipeline modes (Vector RAG / PageIndex).",
-  "name": "SCM Assistant Bot",
   "nodes": [
     {
-      "id": "customAPI_0",
-      "type": "customAPI",
+      "id": "chatGoogleGenerativeAI_0",
+      "position": { "x": 200, "y": 200 },
+      "type": "customNode",
       "data": {
-        "label": "SCM Assistant API",
-        "description": "FastAPI backend serving the RAG pipeline",
-        "baseURL": "https://scm-assistant-bot-1.onrender.com",
-        "method": "POST",
-        "endpoint": "/chat",
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "body": {
-          "query": "{{input}}",
-          "mode": "vector_rag"
-        },
-        "responseKey": "answer"
+        "id": "chatGoogleGenerativeAI_0",
+        "name": "chatGoogleGenerativeAI",
+        "label": "ChatGoogleGenerativeAI",
+        "type": "ChatGoogleGenerativeAI",
+        "inputs": {
+          "modelName": "gemini-2.0-flash",
+          "googleApiKey": ""
+        }
+      }
+    },
+    {
+      "id": "customTool_0",
+      "position": { "x": 200, "y": 500 },
+      "type": "customNode",
+      "data": {
+        "id": "customTool_0",
+        "name": "customTool",
+        "label": "Custom Tool",
+        "type": "CustomTool",
+        "inputs": {
+          "name": "scm_backend",
+          "description": "Use this tool to answer ALL user questions about the supply chain, policies, suppliers, data, and performance. Pass the user's exact question to this tool.",
+          "javascriptFunction": "const fetch = require('node-fetch');\nconst response = await fetch('https://scm-assistant-bot-1.onrender.com/chat', {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({ query: $input, mode: 'vector_rag' })\n});\nconst data = await response.json();\nreturn data.answer;"
+        }
+      }
+    },
+    {
+      "id": "toolAgent_0",
+      "position": { "x": 600, "y": 300 },
+      "type": "customNode",
+      "data": {
+        "id": "toolAgent_0",
+        "name": "toolAgent",
+        "label": "Tool Agent",
+        "type": "ToolAgent",
+        "inputs": {
+          "model": "{{chatGoogleGenerativeAI_0.data.instance}}",
+          "tools": ["{{customTool_0.data.instance}}"]
+        }
       }
     }
   ],
-  "edges": [],
-  "metadata": {
-    "version": "1.0.0",
-    "llm_model": "gemini-2.5-flash",
-    "embedding_model": "gemini-embedding-001",
-    "embedding_dim": 768,
-    "reranker": "jina-reranker-v2-base-multilingual",
-    "vector_store": "FAISS (IndexFlatIP)",
-    "keyword_search": "BM25Okapi",
-    "fusion": "Reciprocal Rank Fusion (k=60)",
-    "chunking_configs": {
-      "config_a": "Section-aware chunking (preserves policy rule boundaries)",
-      "config_b": "Fixed-size 400 tokens / 100 overlap"
+  "edges": [
+    {
+      "id": "chatGoogleGenerativeAI_0-toolAgent_0",
+      "source": "chatGoogleGenerativeAI_0",
+      "target": "toolAgent_0",
+      "sourceHandle": "chatGoogleGenerativeAI_0-output-chatGoogleGenerativeAI-ChatGoogleGenerativeAI|BaseChatModel|BaseLanguageModel|Runnable",
+      "targetHandle": "toolAgent_0-input-model-BaseChatModel|BaseLanguageModel",
+      "type": "buttonedge"
     },
-    "pipeline_modes": ["vector_rag", "pageindex"],
-    "guardrails": ["greeting_detection", "offtopic_rejection", "prompt_injection_defence"]
-  }
+    {
+      "id": "customTool_0-toolAgent_0",
+      "source": "customTool_0",
+      "target": "toolAgent_0",
+      "sourceHandle": "customTool_0-output-customTool-CustomTool|Tool",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge"
+    }
+  ]
 }
