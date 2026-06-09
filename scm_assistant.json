@@ -2,7 +2,7 @@
   "nodes": [
     {
       "id": "chatGoogleGenerativeAI_0",
-      "position": { "x": 200, "y": 200 },
+      "position": { "x": 100, "y": 100 },
       "type": "customNode",
       "data": {
         "id": "chatGoogleGenerativeAI_0",
@@ -13,11 +13,16 @@
           "modelName": "gemini-2.0-flash",
           "googleApiKey": ""
         }
-      }
+      },
+      "width": 300,
+      "height": 400,
+      "selected": false,
+      "positionAbsolute": { "x": 100, "y": 100 },
+      "dragging": false
     },
     {
       "id": "customTool_0",
-      "position": { "x": 200, "y": 500 },
+      "position": { "x": 100, "y": 600 },
       "type": "customNode",
       "data": {
         "id": "customTool_0",
@@ -26,10 +31,15 @@
         "type": "CustomTool",
         "inputs": {
           "name": "scm_backend",
-          "description": "Use this tool to answer ALL user questions about the supply chain, policies, suppliers, data, and performance. Pass the user's exact question to this tool.",
-          "javascriptFunction": "const fetch = require('node-fetch');\nconst response = await fetch('https://scm-assistant-bot-1.onrender.com/chat', {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({ query: $input, mode: 'vector_rag' })\n});\nconst data = await response.json();\nreturn data.answer;"
+          "description": "Answer all user questions using this tool.",
+          "javascriptFunction": "const fetch = require('node-fetch');\nconst response = await fetch('https://scm-assistant-bot-1.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: $input, mode: 'vector_rag' }) });\nconst data = await response.json();\nreturn data.answer;"
         }
-      }
+      },
+      "width": 300,
+      "height": 500,
+      "selected": false,
+      "positionAbsolute": { "x": 100, "y": 600 },
+      "dragging": false
     },
     {
       "id": "toolAgent_0",
@@ -41,28 +51,16 @@
         "label": "Tool Agent",
         "type": "ToolAgent",
         "inputs": {
-          "model": "{{chatGoogleGenerativeAI_0.data.instance}}",
-          "tools": ["{{customTool_0.data.instance}}"]
+          "model": "",
+          "tools": []
         }
-      }
+      },
+      "width": 300,
+      "height": 400,
+      "selected": false,
+      "positionAbsolute": { "x": 600, "y": 300 },
+      "dragging": false
     }
   ],
-  "edges": [
-    {
-      "id": "chatGoogleGenerativeAI_0-toolAgent_0",
-      "source": "chatGoogleGenerativeAI_0",
-      "target": "toolAgent_0",
-      "sourceHandle": "chatGoogleGenerativeAI_0-output-chatGoogleGenerativeAI-ChatGoogleGenerativeAI|BaseChatModel|BaseLanguageModel|Runnable",
-      "targetHandle": "toolAgent_0-input-model-BaseChatModel|BaseLanguageModel",
-      "type": "buttonedge"
-    },
-    {
-      "id": "customTool_0-toolAgent_0",
-      "source": "customTool_0",
-      "target": "toolAgent_0",
-      "sourceHandle": "customTool_0-output-customTool-CustomTool|Tool",
-      "targetHandle": "toolAgent_0-input-tools-Tool",
-      "type": "buttonedge"
-    }
-  ]
+  "edges": []
 }
