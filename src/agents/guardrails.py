@@ -43,7 +43,7 @@ WELCOME_MESSAGE = (
 _OFFTOPIC_PATTERNS = [
     r"\b(weather|recipe|joke|movie|sport|game|music|lyrics|poem)\b",
     r"\b(who is|tell me about yourself|what are you)\b",
-    r"\b(write me|code|program|script|hack|crack)\b",
+    r"\b(write me|code|script|hack|crack)\b",
 ]
 
 _OFFTOPIC_RESPONSE = (
