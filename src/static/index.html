@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCM Assistant — Supply Chain Intelligence</title>
+    <meta name="description" content="AI-powered Supply Chain Governance Chatbot for BQBYTE Technologies">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111828;
+            --bg-card: #1a2036;
+            --bg-input: #1e2540;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.25);
+            --accent-light: #818cf8;
+            --accent-surface: rgba(99,102,241,0.08);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3555;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --user-bubble: rgba(99,102,241,0.15);
+            --bot-bubble: #161d30;
+            --radius: 14px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ────────────────────────────────────── */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .brand-icon {
+            width: 34px; height: 34px;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .brand h1 {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 44px;
+            margin-top: -2px;
+        }
+
+        /* ── Pipeline Section ───────────────────────────── */
+        .sidebar-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-section h3 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .mode-options { display: flex; flex-direction: column; gap: 6px; }
+
+        .mode-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            text-align: left;
+            width: 100%;
+        }
+
+        .mode-option:hover { background: var(--accent-surface); color: var(--text-primary); }
+
+        .mode-option.active {
+            background: var(--accent-surface);
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .mode-option .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .mode-option.active .dot { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+
+        /* ── Pipeline Visualiser ────────────────────────── */
+        .pipeline-vis {
+            padding: 16px 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .pipeline-vis h3 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .step-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            border: 2px solid var(--bg-secondary);
+            z-index: 1;
+            transition: all 0.4s;
+        }
+
+        .step-connector {
+            width: 2px;
+            height: 24px;
+            background: var(--border);
+            transition: background 0.4s;
+        }
+
+        .step-content {
+            padding-bottom: 8px;
+        }
+
+        .step-content .step-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+
+        .step-content .step-detail {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        /* Pipeline states */
+        .pipeline-step.active .step-dot {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            animation: pulse 1.5s infinite;
+        }
+
+        .pipeline-step.active .step-name { color: var(--accent-light); }
+
+        .pipeline-step.done .step-dot { background: var(--success); }
+        .pipeline-step.done .step-connector { background: var(--success); }
+        .pipeline-step.done .step-name { color: var(--success); }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 6px var(--accent-glow); }
+            50% { box-shadow: 0 0 16px var(--accent-glow); }
+        }
+
+        /* ── Sidebar Footer ─────────────────────────────── */
+        .sidebar-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ── Main Content ───────────────────────────────── */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .topbar {
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .topbar-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--success);
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        /* ── Chat Area ──────────────────────────────────── */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-area::-webkit-scrollbar { width: 5px; }
+        .chat-area::-webkit-scrollbar-track { background: transparent; }
+        .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* ── Messages ───────────────────────────────────── */
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 780px;
+            animation: msgIn 0.35s ease-out;
+        }
+
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+        .avatar {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .message.bot .avatar { background: linear-gradient(135deg, var(--accent), #a78bfa); }
+        .message.user .avatar { background: var(--user-bubble); border: 1px solid var(--border); }
+
+        .msg-wrapper { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+        .bubble {
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            line-height: 1.65;
+            font-size: 13.5px;
+            word-wrap: break-word;
+        }
+
+        .message.user .bubble {
+            background: var(--user-bubble);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .bubble {
+            background: var(--bot-bubble);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .bubble strong { color: var(--accent-light); font-weight: 600; }
+        .bubble em { color: var(--text-secondary); font-style: italic; }
+        .bubble code {
+            background: rgba(99,102,241,0.12);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12.5px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .bubble ul, .bubble ol { padding-left: 20px; margin: 8px 0; }
+        .bubble li { margin: 4px 0; }
+        .bubble hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+        .bubble p { margin: 6px 0; }
+        .bubble p:first-child { margin-top: 0; }
+        .bubble p:last-child { margin-bottom: 0; }
+        .bubble h3, .bubble h4 { margin: 10px 0 4px; font-size: 14px; color: var(--accent-light); }
+
+        /* ── Metrics ────────────────────────────────────── */
+        .metrics-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .metric-chip {
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--accent-surface);
+            color: var(--text-muted);
+            border: 1px solid rgba(99,102,241,0.15);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-chip .emoji { font-size: 11px; }
+
+        .query-type-chip {
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .query-type-chip.hybrid { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+        .query-type-chip.structured_data { background: rgba(16,185,129,0.12); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
+        .query-type-chip.policy_lookup { background: rgba(99,102,241,0.12); color: var(--accent-light); border: 1px solid rgba(99,102,241,0.2); }
+        .query-type-chip.greeting { background: rgba(99,102,241,0.12); color: var(--accent-light); border: 1px solid rgba(99,102,241,0.2); }
+
+        /* ── Typing ─────────────────────────────────────── */
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+            padding: 4px 0;
+        }
+
+        .typing-dots span {
+            width: 7px; height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: typeBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typeBounce {
+            0%, 80%, 100% { transform: scale(0.5); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ── Input ──────────────────────────────────────── */
+        .input-bar {
+            padding: 16px 24px 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 13px 18px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 13.5px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-container input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-container input::placeholder { color: var(--text-muted); }
+
+        .send-btn {
+            width: 46px; height: 46px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover { background: var(--accent-light); transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
+        .send-btn:active { transform: translateY(0); }
+        .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        /* ── Responsive ─────────────────────────────────── */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .chat-area { padding: 16px; }
+            .message { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <div class="brand-icon">⚡</div>
+                <h1>SCM Assistant</h1>
+            </div>
+            <div class="brand-sub">BQBYTE Technologies</div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Retrieval Pipeline</h3>
+            <div class="mode-options">
+                <button class="mode-option active" data-mode="vector_rag" onclick="setMode('vector_rag')">
+                    <span class="dot"></span>
+                    <div>
+                        <div style="font-weight:500">Vector RAG</div>
+                        <div style="font-size:10px;color:var(--text-muted)">FAISS + BM25 + Jina Reranker</div>
+                    </div>
+                </button>
+                <button class="mode-option" data-mode="pageindex" onclick="setMode('pageindex')">
+                    <span class="dot"></span>
+                    <div>
+                        <div style="font-weight:500">PageIndex</div>
+                        <div style="font-size:10px;color:var(--text-muted)">LLM-navigated tree lookup</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div class="pipeline-vis">
+            <h3>Live Pipeline</h3>
+            <div id="pipelineSteps">
+                <div class="pipeline-step" data-step="guardrails">
+                    <div class="step-line"><div class="step-dot"></div><div class="step-connector"></div></div>
+                    <div class="step-content"><div class="step-name">Guardrails</div><div class="step-detail">Input safety check</div></div>
+                </div>
+                <div class="pipeline-step" data-step="classify">
+                    <div class="step-line"><div class="step-dot"></div><div class="step-connector"></div></div>
+                    <div class="step-content"><div class="step-name">Query Classifier</div><div class="step-detail">Route to pipeline</div></div>
+                </div>
+                <div class="pipeline-step" data-step="entity">
+                    <div class="step-line"><div class="step-dot"></div><div class="step-connector"></div></div>
+                    <div class="step-content"><div class="step-name">Entity Resolver</div><div class="step-detail">Fuzzy name matching</div></div>
+                </div>
+                <div class="pipeline-step" data-step="retrieve">
+                    <div class="step-line"><div class="step-dot"></div><div class="step-connector"></div></div>
+                    <div class="step-content"><div class="step-name">Hybrid Retrieval</div><div class="step-detail">Semantic + BM25 + RRF</div></div>
+                </div>
+                <div class="pipeline-step" data-step="rerank">
+                    <div class="step-line"><div class="step-dot"></div><div class="step-connector"></div></div>
+                    <div class="step-content"><div class="step-name">Jina Reranker</div><div class="step-detail">Cross-encoder scoring</div></div>
+                </div>
+                <div class="pipeline-step" data-step="pandas">
+                    <div class="step-line"><div class="step-dot"></div><div class="step-connector"></div></div>
+                    <div class="step-content"><div class="step-name">Pandas Agent</div><div class="step-detail">Code-gen data analysis</div></div>
+                </div>
+                <div class="pipeline-step" data-step="synthesise">
+                    <div class="step-line"><div class="step-dot"></div></div>
+                    <div class="step-content"><div class="step-name">Synthesise</div><div class="step-detail">Final answer generation</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            Gemini 2.5 Flash · FAISS · Jina Reranker<br>
+            Section-Aware Chunking · RRF Fusion
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+        <div class="topbar">
+            <div class="topbar-title">Supply Chain Governance Chat</div>
+            <div class="status-badge" id="statusBadge">Online</div>
+        </div>
+
+        <div class="chat-area" id="chatArea"></div>
+
+        <div class="input-bar">
+            <div class="input-container">
+                <input type="text" id="queryInput"
+                       placeholder="Ask about suppliers, policies, compliance…"
+                       onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendMessage()"
+                       autocomplete="off" autofocus>
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">↑</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    let currentMode = 'vector_rag';
+    const chatArea = document.getElementById('chatArea');
+    const queryInput = document.getElementById('queryInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    // ── Markdown renderer ────────────────────────────
+    function md(text) {
+        return text
+            .replace(/### (.+)/g, '<h4>$1</h4>')
+            .replace(/## (.+)/g, '<h3>$1</h3>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/`(.+?)`/g, '<code>$1</code>')
+            .replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>')
+            .replace(/((?:<li>.*<\/li>\s*)+)/g, '<ul>$1</ul>')
+            .replace(/^---$/gm, '<hr>')
+            .replace(/\n{2,}/g, '</p><p>')
+            .replace(/\n/g, '<br>')
+            .replace(/^(.+)/, '<p>$1')
+            .replace(/(.+)$/, '$1</p>')
+            .replace(/<p>\s*<\/p>/g, '')
+            .replace(/<p>\s*<(ul|ol|hr|h[1-6])/g, '<$1')
+            .replace(/<\/(ul|ol|hr|h[1-6])>\s*<\/p>/g, '</$1>');
+    }
+
+    // ── Mode toggle ──────────────────────────────────
+    function setMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-option').forEach(b =>
+            b.classList.toggle('active', b.dataset.mode === mode)
+        );
+        // Update pipeline step labels for PageIndex mode
+        const retrieveStep = document.querySelector('[data-step="retrieve"] .step-detail');
+        const rerankStep = document.querySelector('[data-step="rerank"] .step-name');
+        if (mode === 'pageindex') {
+            retrieveStep.textContent = 'LLM tree navigation';
+            rerankStep.textContent = 'Section Extraction';
+        } else {
+            retrieveStep.textContent = 'Semantic + BM25 + RRF';
+            rerankStep.textContent = 'Jina Reranker';
+        }
+    }
+
+    // ── Pipeline animation ───────────────────────────
+    const PIPELINE_STEPS = ['guardrails','classify','entity','retrieve','rerank','pandas','synthesise'];
+    let pipelineTimer = null;
+
+    function resetPipeline() {
+        document.querySelectorAll('.pipeline-step').forEach(s => {
+            s.classList.remove('active','done');
+        });
+    }
+
+    function animatePipeline() {
+        resetPipeline();
+        let idx = 0;
+        pipelineTimer = setInterval(() => {
+            if (idx > 0) {
+                const prev = document.querySelector(`[data-step="${PIPELINE_STEPS[idx-1]}"]`);
+                if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+            }
+            if (idx < PIPELINE_STEPS.length) {
+                const cur = document.querySelector(`[data-step="${PIPELINE_STEPS[idx]}"]`);
+                if (cur) cur.classList.add('active');
+                idx++;
+            } else {
+                clearInterval(pipelineTimer);
+            }
+        }, 600);
+    }
+
+    function finishPipeline() {
+        clearInterval(pipelineTimer);
+        document.querySelectorAll('.pipeline-step').forEach(s => {
+            s.classList.remove('active');
+            s.classList.add('done');
+        });
+    }
+
+    // ── Add message ──────────────────────────────────
+    function addMessage(text, type, meta = null) {
+        const msg = document.createElement('div');
+        msg.className = `message ${type}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar';
+        avatar.textContent = type === 'user' ? '👤' : '⚡';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'msg-wrapper';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerHTML = md(text);
+        wrap.appendChild(bubble);
+
+        if (meta && type === 'bot') {
+            const row = document.createElement('div');
+            row.className = 'metrics-row';
+
+            if (meta.query_type) {
+                const qt = document.createElement('span');
+                qt.className = `query-type-chip ${meta.query_type}`;
+                qt.textContent = meta.query_type.replace('_',' ');
+                row.appendChild(qt);
+            }
+
+            const m = meta.metrics || {};
+            const chips = [
+                ['🤖', `${m.total_llm_calls||0} LLM calls`],
+                ['⏱️', `${Math.round(m.total_latency_ms||0)}ms`],
+                ['📊', `${(m.total_input_tokens||0)+(m.total_output_tokens||0)} tokens`],
+            ];
+            chips.forEach(([emoji, label]) => {
+                const chip = document.createElement('span');
+                chip.className = 'metric-chip';
+                chip.innerHTML = `<span class="emoji">${emoji}</span> ${label}`;
+                row.appendChild(chip);
+            });
+            wrap.appendChild(row);
+        }
+
+        msg.appendChild(avatar);
+        msg.appendChild(wrap);
+        chatArea.appendChild(msg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showTyping() {
+        const msg = document.createElement('div');
+        msg.className = 'message bot';
+        msg.id = 'typing';
+        msg.innerHTML = `<div class="avatar">⚡</div><div class="msg-wrapper"><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+        chatArea.appendChild(msg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function removeTyping() { document.getElementById('typing')?.remove(); }
+
+    // ── Send message ─────────────────────────────────
+    async function sendMessage() {
+        const q = queryInput.value.trim();
+        if (!q) return;
+
+        addMessage(q, 'user');
+        queryInput.value = '';
+        sendBtn.disabled = true;
+        showTyping();
+        animatePipeline();
+
+        try {
+            const r = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ query: q, mode: currentMode }),
+            });
+            const data = await r.json();
+            removeTyping();
+            finishPipeline();
+
+            if (data.answer) {
+                addMessage(data.answer, 'bot', data);
+            } else if (data.detail) {
+                addMessage('⚠️ ' + (Array.isArray(data.detail) ? data.detail[0].msg : data.detail), 'bot');
+            }
+        } catch (e) {
+            removeTyping();
+            finishPipeline();
+            addMessage('⚠️ Could not reach the server. Is it running?', 'bot');
+        }
+
+        sendBtn.disabled = false;
+        queryInput.focus();
+    }
+
+    // ── Init: welcome message ────────────────────────
+    fetch('/welcome').then(r=>r.json()).then(d=>addMessage(d.message,'bot'))
+        .catch(()=>addMessage('Welcome to SCM Assistant! Ask me anything about supply chain governance.','bot'));
+    </script>
+</body>
+</html>

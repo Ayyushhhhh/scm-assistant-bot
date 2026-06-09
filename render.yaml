@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: scm-assistant
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python -m scripts.ingest
+    startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT --workers 1
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEYS
+        sync: false
+      - key: JINA_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: PYTHON_VERSION
+        value: "3.12"

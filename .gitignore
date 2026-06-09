@@ -1,0 +1,37 @@
+# Environment & secrets — NEVER commit
+.env
+*.env
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Generated indexes (rebuilt by scripts/ingest.py)
+indexes/
+
+# Original requirement folder (data/ is the canonical location)
+Requirement/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+logs/

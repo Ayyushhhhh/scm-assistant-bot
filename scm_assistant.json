@@ -1,0 +1,42 @@
+{
+  "description": "SCM Assistant — Supply Chain Governance RAG Chatbot for BQBYTE Technologies. Connects to a custom FastAPI backend with hybrid retrieval (FAISS + BM25 + Jina Reranker) and dual pipeline modes (Vector RAG / PageIndex).",
+  "name": "SCM Assistant Bot",
+  "nodes": [
+    {
+      "id": "customAPI_0",
+      "type": "customAPI",
+      "data": {
+        "label": "SCM Assistant API",
+        "description": "FastAPI backend serving the RAG pipeline",
+        "baseURL": "https://scm-assistant.onrender.com",
+        "method": "POST",
+        "endpoint": "/chat",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "query": "{{input}}",
+          "mode": "vector_rag"
+        },
+        "responseKey": "answer"
+      }
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "version": "1.0.0",
+    "llm_model": "gemini-2.5-flash",
+    "embedding_model": "gemini-embedding-001",
+    "embedding_dim": 768,
+    "reranker": "jina-reranker-v2-base-multilingual",
+    "vector_store": "FAISS (IndexFlatIP)",
+    "keyword_search": "BM25Okapi",
+    "fusion": "Reciprocal Rank Fusion (k=60)",
+    "chunking_configs": {
+      "config_a": "Section-aware chunking (preserves policy rule boundaries)",
+      "config_b": "Fixed-size 400 tokens / 100 overlap"
+    },
+    "pipeline_modes": ["vector_rag", "pageindex"],
+    "guardrails": ["greeting_detection", "offtopic_rejection", "prompt_injection_defence"]
+  }
+}
